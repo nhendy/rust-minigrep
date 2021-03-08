@@ -2,14 +2,25 @@
 mod test {
     use super::*;
     #[test]
-    fn one_result {
-
+    fn one_result (){
+        let query= "duct";
+        let contents = "\
+Rust:
+safe, fast, productive.
+Pick three.";
+        assert_eq!(vec!["safe, fast, productive."], search(query, contents));
     }
 
 }
 
-fn search(file_data:&str, query:&str) -> Vec<&str>{
-    vec![]        
+fn search<'a>(query:&'a str, file_data:&'a str) -> Vec<&'a str>{
+    let  mut result = Vec::new();
+    for line in file_data.lines() {
+        if line.contains(query){
+            result.push(line);
+        }
+    }
+    result
 }
 
 #[derive(Debug)]
@@ -39,5 +50,8 @@ pub fn parse_args(args: &[String]) -> Config {
 pub fn run(config: Config) -> Result<(), Box<dyn std::error::Error>> {
     println!("Config:{:?}", config);
     let file_data = std::fs::read_to_string(config.filename)?;
+    for line in search(&config.query, &file_data){
+        println!("{}", line);
+    }
     Ok(())
 }
